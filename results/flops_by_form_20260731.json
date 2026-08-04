@@ -1,0 +1,102 @@
+{
+  "_nota": "Re-medicion de FLOPs por FORMA de la penalizacion, 31-jul-2026. Corrige tres cosas del exp6 original: no tenia brazo de group lasso solo, usaba un lambda no optimizado y reportaba una sola semilla.",
+  "_protocolo": {
+    "modelo": "MLP 784-256-128-10, MNIST",
+    "epocas": 5,
+    "ajuste": "rejilla completa en 2 semillas FUERA de muestra (7077, 8088)",
+    "evaluacion": "configuraciones fijas en 10 semillas (42..6066)",
+    "criterio_validez": "la poda debe costar menos de 1 pp de accuracy",
+    "ewc": "NO APLICA: tarea unica, sin Fisher de tarea anterior"
+  },
+  "ancla_exp6": {
+    "_def": "configuracion literal de exp6, para verificar que el montaje reproduce",
+    "acc": 0.953882,
+    "acc_podado": 0.954271,
+    "reduccion": 0.5968,
+    "publicado": 0.5446,
+    "reproduce": true,
+    "nota": "54.46% en CPU y 59.68% en T4: no determinismo de GPU. Un numero de 1 semilla tiene varianza real"
+  },
+  "resultado_10_semillas": {
+    "_def": "restringido a las semillas donde la poda NO rompe el modelo",
+    "wd_1e-2": {
+      "validas": "10/10",
+      "flops": 0.2412,
+      "acc": 0.970753,
+      "acc_podado": 0.970753
+    },
+    "none": {
+      "validas": "10/10",
+      "flops": 0.0,
+      "acc": 0.991672,
+      "acc_podado": 0.991672
+    },
+    "gl+raw": {
+      "validas": "9/10",
+      "flops": 0.9456,
+      "acc": 0.961082,
+      "acc_podado": 0.959612
+    },
+    "gl+cos": {
+      "validas": "6/10",
+      "flops": 0.9477,
+      "acc": 0.962606,
+      "acc_podado": 0.961017
+    },
+    "gl+lib": {
+      "validas": "6/10",
+      "flops": 0.9469,
+      "acc": 0.962801,
+      "acc_podado": 0.960206
+    },
+    "gl_solo": {
+      "validas": "6/10",
+      "flops": 0.946,
+      "acc": 0.962249,
+      "acc_podado": 0.961795
+    },
+    "gl+rownorm": {
+      "validas": "3/10",
+      "flops": 0.9433,
+      "acc": 0.959525,
+      "acc_podado": 0.959006
+    }
+  },
+  "hallazgos": {
+    "1_compresion_igual": "Cuando funcionan, TODOS los brazos dan lo mismo: FLOPs entre 94.33% y 94.77% (dispersion 0.44 pp) y accuracy entre 95.90% y 96.18% (0.28 pp). Ningun brazo comprime mas.",
+    "2_la_diferencia_es_fiabilidad": "Toda la diferencia esta en cuantas veces funcionan: gl+raw 9/10, gl solo y las dos formas compuestas 6/10, rownorm 3/10.",
+    "3_la_ventaja_sobre_wd_es_del_group_lasso": "Group lasso SOLO da 94.60% frente al 24.12% de WD, el mismo 3.92x. Omega aporta -0.04 pp de compresion, o sea nada. Su aporte es 6/10 -> 9/10.",
+    "4_el_numero_publicado_se_queda_corto": "94.56% alcanzable frente al 54.46% publicado. WD si reproduce su valor (24.12% frente a 25.27%), o sea el lado mal calibrado era el de Omega.",
+    "5_formas_opuestas": "El compuesto gana en RETENCION y no aporta nada en poda (6/10, igual que group lasso solo). El crudo es el PEOR en retencion y el unico que ayuda en poda. Dos metodos, no uno."
+  },
+  "caveats": [
+    "9/10 frente a 6/10 NO alcanza significacion con n=10: McNemar exacto en el mejor caso da p=0.25",
+    "Las accuracies no quedaron igualadas: WD 97.08% frente a gl+raw 95.96%, o sea -1.11 pp. WD tiene mas accuracy Y menos FLOPs, asi que es un canje y no dominancia",
+    "La podabilidad cuesta -3.21 pp de accuracy frente a no regularizar",
+    "El ajuste eligio GL=1e-2 para group lasso solo, valido en las 2 semillas de ajuste y roto en 4 de las 10 de evaluacion. No es un fallo: es lo que el protocolo fuera de muestra sirve para detectar"
+  ],
+  "afirmacion_defendible": "Group lasso combinado con la penalizacion cruda consigue unas cuatro veces la compresion de weight decay comparable, a cambio de 1.1 pp de accuracy y una semilla fallida de diez, y la contribucion especifica de la penalizacion es que esa compresion sea ALCANZABLE DE FORMA FIABLE en vez de salir bien poco mas de la mitad de las veces.",
+  "recuperacion_tras_podar": {
+    "_nota": "El criterio de validez sin recuperacion es mas estricto que la practica: las tuberias de compresion podan y DESPUES reentrenan unas epocas. Se repitio con 2 epocas de reajuste solo de la tarea sobre cada modelo podado.",
+    "fiabilidad": {
+      "gl_solo": {
+        "sin_reajuste": "6/10",
+        "con_reajuste": "8/10",
+        "rescatadas": 2
+      },
+      "gl+raw": {
+        "sin_reajuste": "9/10",
+        "con_reajuste": "10/10",
+        "rescatadas": 1
+      }
+    },
+    "lectura": "La ventaja se encoge de +3 a +2 semillas y SOBREVIVE. Y el enunciado mejora: gl+raw pasa a 10/10, o sea nunca falla. Dos semillas de group lasso solo siguen rotas DESPUES del reajuste, asi que eran fallos de verdad y no un artefacto de no reentrenar.",
+    "coste_esperado": {
+      "gl_solo": "1.25 entrenamientos por modelo podable",
+      "gl+raw": "1.00",
+      "ahorro": "20% menos corridas (33% con el criterio estricto)"
+    },
+    "estadistica": "10/10 frente a 8/10: McNemar exacto en el mejor caso da p=0.50, AUN MENOS concluyente que el 9/10 frente a 6/10 (p=0.25), porque hay menos pares discordantes. La direccion se sostiene bajo los dos criterios; la significacion no se alcanza con ninguno.",
+    "alcance": "MLP de 3 capas sobre MNIST, un criterio de poda, 10 semillas. El experimento mas cercano a escala transformer (GPT-2) no encontro aporte marginal en COMPRESION, aunque no midio fiabilidad. No esta establecido que la propiedad transfiera a la escala en que importaria."
+  }
+}

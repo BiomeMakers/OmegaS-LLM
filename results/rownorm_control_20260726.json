@@ -1,0 +1,158 @@
+{
+  "_nota": "Resultados del control de normas de fila (rownorm) barrido sobre SU PROPIA rejilla, 26-jul-2026. Transcritos de la salida impresa por run_rownorm.py. Los json por celda quedaron en el pod, en results_rownorm_tune/ y results_rownorm_eval/. Aqui se guardan los campos que la salida imprime: retencion y HumanEval absoluto tras la tarea B. humaneval_after_A no se transcribio, asi que no se incluye en vez de derivarlo con perdida de precision.",
+  "_motivo": "En run_overnight.py, build_tuning_jobs() no barre rownorm y build_eval_jobs() lo lanza con OMEGA_TARGET = optimo de omega_lib. Ese brazo fue el unico sin fuerza propia, y colapso. Esta corrida lo repara.",
+  "rejilla": [
+    0.001,
+    0.003,
+    0.01,
+    0.03
+  ],
+  "semillas_ajuste": [
+    42,
+    123
+  ],
+  "semillas_evaluacion": [
+    42,
+    123,
+    456,
+    789,
+    1011,
+    2022,
+    3033,
+    4044,
+    5055,
+    6066
+  ],
+  "barrido": {
+    "0.001": {
+      "media_retencion": 0.519,
+      "desv": 0.065,
+      "n": 2,
+      "elegido": true
+    },
+    "0.003": {
+      "media_retencion": 0.396,
+      "desv": 0.192,
+      "n": 2
+    },
+    "0.01": {
+      "media_retencion": 0.315,
+      "desv": 0.091,
+      "n": 2
+    },
+    "0.03": {
+      "media_retencion": 0.283,
+      "desv": 0.223,
+      "n": 2
+    }
+  },
+  "optimo_elegido": 0.001,
+  "caveat_seleccion": "El 0.001 se eligio sobre las semillas 42 y 123, que resultaron ser las DOS PEORES de este brazo en las diez (0.453 y 0.509 frente a 0.583-0.914). Su seleccion no es fiable. No se reselecciono sobre las diez para no dar al control una ventaja de mejor-de-varios que omega no tuvo.",
+  "evaluacion": [
+    {
+      "seed": 42,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.453,
+      "humaneval_after_B": 0.146
+    },
+    {
+      "seed": 123,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.509,
+      "humaneval_after_B": 0.165
+    },
+    {
+      "seed": 456,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.583,
+      "humaneval_after_B": 0.171
+    },
+    {
+      "seed": 789,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.87,
+      "humaneval_after_B": 0.244
+    },
+    {
+      "seed": 1011,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.914,
+      "humaneval_after_B": 0.195
+    },
+    {
+      "seed": 2022,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.882,
+      "humaneval_after_B": 0.183
+    },
+    {
+      "seed": 3033,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.667,
+      "humaneval_after_B": 0.159
+    },
+    {
+      "seed": 4044,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.667,
+      "humaneval_after_B": 0.195
+    },
+    {
+      "seed": 5055,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.254,
+      "humaneval_after_B": 0.098
+    },
+    {
+      "seed": 6066,
+      "arm": "rownorm",
+      "omega_target": 0.001,
+      "retention_pct": 0.816,
+      "humaneval_after_B": 0.189
+    }
+  ],
+  "resumen": {
+    "rownorm": {
+      "retencion_media": 0.661,
+      "desv": 0.216,
+      "abs_media": 0.174,
+      "abs_desv": 0.038
+    },
+    "none": {
+      "retencion_media": 0.631,
+      "desv": 0.103,
+      "abs_media": 0.168,
+      "abs_desv": 0.029
+    },
+    "omega_lib": {
+      "retencion_media": 0.766,
+      "desv": 0.145,
+      "abs_media": 0.223,
+      "abs_desv": 0.045
+    }
+  },
+  "tests_signos_capacidad_absoluta": {
+    "omega_vs_none": {
+      "victorias": "9/10",
+      "p_una_cola": 0.0107
+    },
+    "omega_vs_rownorm": {
+      "victorias": "8/10",
+      "p_una_cola": 0.0547
+    },
+    "rownorm_vs_none": {
+      "victorias": "6/10",
+      "p_una_cola": 0.377
+    }
+  },
+  "conclusion": "Igualar normas de fila, por si solo y con su propia fuerza, no mejora la retencion de forma fiable sobre no regularizar (6/10, p=0.38). Omega-S excede al control en 8/10 (p=0.055). Evidencia de que el efecto no se reduce a equalizar normas, sin cruzar la significacion convencional a diez semillas."
+}

@@ -1,0 +1,46 @@
+{
+  "_nota": "Confirmacion independiente del control rownorm en un target NO optimo. El barrido propio de rownorm (results/rownorm_control_20260726.json) eligio 0.001 y descarto 0.003, que dio 0.396 en las semillas de ajuste. Esta corrida evalua 0.003 sobre las diez y confirma esa decision. NO sustituye al control principal, que sigue siendo el de target 0.001 con retencion 0.661.",
+  "target": 0.003,
+  "semillas": [
+    42,
+    123,
+    456,
+    789,
+    1011,
+    2022,
+    3033,
+    4044,
+    5055,
+    6066
+  ],
+  "retencion": {
+    "42": 0.2449,
+    "123": 0.3448,
+    "456": 0.2791,
+    "789": 0.7632,
+    "1011": 0.2683,
+    "2022": 0.7857,
+    "3033": 0.1905,
+    "4044": 0.6863,
+    "5055": 0.2545,
+    "6066": 0.5526
+  },
+  "humaneval_tras_A": {
+    "42": 0.2988,
+    "123": 0.1768,
+    "456": 0.2622,
+    "789": 0.2317,
+    "1011": 0.25,
+    "2022": 0.1707,
+    "3033": 0.2561,
+    "4044": 0.311,
+    "5055": 0.3354,
+    "6066": 0.2317
+  },
+  "media": 0.437,
+  "mediana": 0.312,
+  "desv": 0.2348,
+  "control_de_validez": "he_A entre 0.171 y 0.335: el brazo aprende la tarea A con normalidad",
+  "artefacto_declarado": "Spearman(he_A, retencion) = -0.564: las retenciones altas salen en las semillas de he_A bajo. Efecto techo ya documentado. La comparacion en capacidad absoluta es la que manda.",
+  "conclusion": "0.003 no es el optimo de rownorm, coherente con lo que ya decia su barrido propio."
+}

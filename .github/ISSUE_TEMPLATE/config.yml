@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Commercial use
+    url: https://github.com/BiomeMakers/OmegaS-LLM/blob/main/COMMERCIAL-LICENSE.md
+    about: The code is open for research. Commercial use is licensed separately.

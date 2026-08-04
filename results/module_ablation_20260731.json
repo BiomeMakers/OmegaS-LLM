@@ -1,0 +1,55 @@
+{
+  "_nota": "Ablacion por modulo: que canal lleva el efecto de retencion. 20 celdas, 31-jul-2026.",
+  "_diseno": "Penalizacion restringida a un tipo de modulo (OMEGA_ONLY) dejando el ADAPTADOR intacto en q_proj y v_proj. Asi lo que varia es que canal se regulariza, no donde puede aprender el modelo. omega_lib, target 0.03, EVERY_K=10, las 10 semillas de evaluacion.",
+  "_por_que_la_comparacion_es_entre_los_dos_ablacionados": "Los dos concentran la misma fuerza calibrada en la mitad de modulos, asi que arrastran el MISMO sesgo. Compararlos contra el compuesto completo mezclaria canal con intensidad.",
+  "retencion": {
+    "v_proj_alineamiento": {
+      "42": 0.5306,
+      "123": 0.8462,
+      "456": 0.6222,
+      "789": 0.5714,
+      "1011": 0.6591,
+      "2022": 0.5581,
+      "3033": 0.6078,
+      "4044": 0.5577,
+      "5055": 0.7551,
+      "6066": 0.775,
+      "media": 0.6483
+    },
+    "q_proj_magnitud": {
+      "42": 0.4118,
+      "123": 0.3,
+      "456": 1.1481,
+      "789": 0.4545,
+      "1011": 0.4,
+      "2022": 0.4286,
+      "3033": 0.5,
+      "4044": 0.5,
+      "5055": 0.75,
+      "6066": 0.4324,
+      "media": 0.5325
+    },
+    "omega_lib_completo_referencia": 0.7663
+  },
+  "resultado": {
+    "gana_alineamiento": "9 de 10",
+    "dif_media": 0.1158,
+    "dif_mediana": 0.1178,
+    "test_de_signos": {
+      "p_una_cola": 0.0107,
+      "p_bilateral": 0.0215
+    },
+    "wilcoxon": {
+      "W": 9,
+      "p_bilateral_exacto": 0.0645,
+      "nota": "no cruza porque la unica derrota es tambien la mayor diferencia"
+    }
+  },
+  "ninguno_reproduce_el_compuesto": {
+    "v_proj_bate_a_omega_lib": "3/10",
+    "q_proj_bate_a_omega_lib": "2/10",
+    "lectura": "El mejor de los dos (0.648) apenas supera a none (0.631). El efecto no esta en un canal: requiere actuar sobre los dos tipos de modulo."
+  },
+  "observacion_del_patron_bimodal": "La unica semilla donde gana magnitud, la 456, es donde gana por mas margen Y donde SUPERA al compuesto completo (1.148 frente a 1.023). En la 5055 los dos canales empatan y ambos superan al compuesto. Candidata a explicar el patron bimodal: habria semillas de regimen magnitud y de regimen alineamiento. Con una semilla de diez es observacion, no hallazgo.",
+  "caveat": "La calibracion fija el gradiente TOTAL, asi que restringir a la mitad de los modulos concentra esa fuerza: cada brazo ablacionado recibe ~2x de fuerza acumulada por modulo. No afecta a la comparacion entre los dos ablacionados; si a cualquier comparacion contra el compuesto completo."
+}

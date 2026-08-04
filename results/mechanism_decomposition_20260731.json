@@ -1,0 +1,114 @@
+{
+  "_nota": "De que esta hecha Coex. Analisis estatico sobre los pesos base, sin GPU.",
+  "hallazgo_de_codigo": {
+    "descripcion": "StochasticOmegaS bifurca por forma: si W es cuadrada usa A = sigmoid(|W|) elemento a elemento, si no usa A = sigmoid(|W W^T|). En Llama-3-8B q_proj es cuadrada y v_proj no, asi que las corridas usaron UNA DE CADA. El texto describe solo la del Gram.",
+    "impacto_medido": "Coex difiere por un factor de ~416 entre las dos ramas en q_proj (21.86 frente a 9097)"
+  },
+  "descomposicion_de_grados": {
+    "_metodo": "regresion de la secuencia de grados sobre la norma de fila; R2 = fraccion de MAGNITUD",
+    "q_proj_rama_cuadrada": {
+      "capa0": 0.1845,
+      "capa8": 0.9799,
+      "capa16": 0.9819,
+      "capa24": 0.978,
+      "capa31": 0.8931,
+      "media_capas_8_31": 0.9582
+    },
+    "v_proj_rama_gram": {
+      "capa0": 0.2175,
+      "capa8": 0.4068,
+      "capa16": 0.3966,
+      "capa24": 0.1478,
+      "capa31": 0.2914,
+      "media": 0.292
+    }
+  },
+  "lectura": "En la rama cuadrada el grado es MAGNITUD de fila (96% en capas 8-31). En la rama Gram es ALINEAMIENTO con las demas filas (71%). El regularizador aplica dos criterios distintos segun la forma del modulo.",
+  "siguiente_experimento": "Ablacion por modulo: aplicar la penalizacion solo a q_proj o solo a v_proj dejando el adaptador intacto en ambos. Si la ventaja vive en v_proj, el mecanismo es alineamiento.",
+  "caveat": "Es sobre pesos BASE. No dice cual de los dos canales se MUEVE durante el entrenamiento.",
+  "elasticidad_de_los_cuatro_factores": {
+    "_nota": "Cuanto se mueve cada factor del objetivo ante un cambio en los pesos. Elasticidad = (dX/X)/(dW/W) en una direccion aleatoria fija; adimensional, asi que comparable entre factores y modulos. 0 = el factor no puede aportar gradiente.",
+    "_metodo": "check_M.py sobre los pesos BASE de Llama-3-8B, 10 proyecciones de atencion en capas 0, 8, 16, 24 y 31, cada una con la rama que la implementacion le aplica. Submuestreo a 1024 filas: el colapso del sigmoid es un fenomeno por entrada, no de escala. M por lambda_2 EXACTO, para separar '¿se mueve M?' de '¿converge el estimador?'.",
+    "mediana": {
+      "C": 0.0,
+      "D": 0.0,
+      "M_lambda2": 0.0001,
+      "Coex": 0.0091
+    },
+    "por_modulo": {
+      "L0.q_proj": {
+        "rama": "cuadrada",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0,
+        "Coex": 0.009
+      },
+      "L0.v_proj": {
+        "rama": "gram",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0001,
+        "Coex": 0.0312
+      },
+      "L8.q_proj": {
+        "rama": "cuadrada",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0001,
+        "Coex": 0.0073
+      },
+      "L8.v_proj": {
+        "rama": "gram",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0001,
+        "Coex": 0.004
+      },
+      "L16.q_proj": {
+        "rama": "cuadrada",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0001,
+        "Coex": 0.0092
+      },
+      "L16.v_proj": {
+        "rama": "gram",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0,
+        "Coex": 0.0056
+      },
+      "L24.q_proj": {
+        "rama": "cuadrada",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0,
+        "Coex": 0.0129
+      },
+      "L24.v_proj": {
+        "rama": "gram",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0,
+        "Coex": 0.0057
+      },
+      "L31.q_proj": {
+        "rama": "cuadrada",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0001,
+        "Coex": 0.0123
+      },
+      "L31.v_proj": {
+        "rama": "gram",
+        "C": 0.0,
+        "D": 0.0,
+        "M": 0.0001,
+        "Coex": 0.0186
+      }
+    },
+    "lectura": "TRES de los cuatro factores estan numericamente INERTES y uno lleva todo: Coex responde unas 90 veces mas que M. Como esta implementado, el objetivo compuesto se reduce en la practica a una penalizacion sobre la varianza de grados.",
+    "consecuencia_para_la_discrepancia_de_M": "La libreria estima lambda_2 y lo empuja ABAJO, mientras la Definicion 1 del FSRI con M = 1/lambda_2 lo requiere ARRIBA. Con elasticidad 0.0001 el termino NO SE MUEVE, asi que la orientacion invertida no ha tenido efecto en ninguna direccion. Lo que hay que corregir es la DESCRIPCION del objetivo, no su comportamiento. Una construccion en la que M este vivo haria que la orientacion importase, y comprobar si corregirla mejora la retencion es un experimento que nadie ha corrido.",
+    "referencia": "C bajo coseno tiene mediana 16.6 sobre estos mismos pesos: ahi si esta vivo."
+  }
+}

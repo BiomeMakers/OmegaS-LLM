@@ -1,0 +1,43 @@
+cff-version: 1.2.0
+message: "If you use Omega-S in your research, please cite it as below."
+type: software
+title: "Omega-S: A Functional Resilience Index for LLM Fine-Tuning"
+abstract: >
+  Omega-S is a regularizer for large-scale neural networks (topological by
+  construction, degree-variance-controlling as measured) that penalizes
+  structural monopolies in weight connectivity graphs via Hutchinson trace
+  estimation of Tr(A³) on the weight adjacency matrix A = WW⊤. It needs no
+  previous-task data, no Fisher matrix and no stored copy of the old weights.
+  On Llama-3-8B with LoRA it retains more of the original capability than no
+  regularisation on 9 of 10 seeds, and adds under 0.4% to the cost of a
+  training step.
+authors:
+  - family-names: Acedo
+    given-names: Alberto
+    affiliation: "Biome Makers Inc."
+    orcid: ""
+version: "0.1.0"
+date-released: "2026-07-18"
+url: "https://github.com/BiomeMakers/OmegaS-LLM"
+repository-code: "https://github.com/BiomeMakers/OmegaS-LLM"
+license: AGPL-3.0
+keywords:
+  - topological regularization
+  - large language models
+  - Hutchinson trace estimator
+  - catastrophic forgetting
+  - continual learning
+  - weight monopolies
+  - LoRA
+  - FSDP
+  - scale-free networks
+  - microbial networks
+preferred-citation:
+  type: article
+  title: "Omega-S: A Functional Resilience Index for LLM Fine-Tuning"
+  authors:
+    - family-names: Acedo
+      given-names: Alberto
+  year: 2026
+  notes: "USPTO Patent Pending No. 64/121,656"
+  url: "https://github.com/BiomeMakers/OmegaS-LLM"

@@ -1,0 +1,23 @@
+{
+  "_nota": "Elasticidad de los cuatro factores respecto a los pesos, y su cambio durante una corrida.",
+  "elasticidad_pesos_base": {
+    "C": 0.0,
+    "D": 0.0,
+    "M": 0.0001,
+    "Coex": 0.0091
+  },
+  "elasticidad_pesos_entrenados": {
+    "C": 0.0,
+    "D": 0.0,
+    "M": 0.0001,
+    "Coex": 0.0139
+  },
+  "cambio_relativo_durante_la_corrida_mediana_10_semillas": {
+    "C": -0.0,
+    "D": 0.0007,
+    "M": 0.0006,
+    "Coex": -0.0587
+  },
+  "lectura": "Tres de los cuatro factores estan inertes en las tres medidas. La hipotesis de que M despierta durante el entrenamiento QUEDA REFUTADA: su elasticidad es 0.0001 antes y despues, y su cambio durante la corrida es +0.06%. La mejora al corregir la orientacion viene del cambio de ESCALA del objetivo (de -1.06 a -10.73), que al calibrarse lambda por ratio desplaza el punto de operacion del unico canal vivo.",
+  "control": "Aplicar la misma inversion a la construccion coseno, donde el objetivo NO salta de escala, no cambia nada: 4/10 semillas, dif +0.010, p=0.83."
+}

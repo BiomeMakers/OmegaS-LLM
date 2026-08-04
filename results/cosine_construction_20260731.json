@@ -1,0 +1,215 @@
+{
+  "_nota": "Ronda de la construccion COSENO, 30-31 jul 2026. Prueba la reformulacion que el apendice del preprint proponia como direccion abierta. Resultado NEGATIVO.",
+  "_protocolo": {
+    "modelo": "Llama-3-8B",
+    "adaptador": "LoRA r=8 alpha=32 sobre q_proj y v_proj",
+    "tareas": "code_search_net -> openwebtext",
+    "metrica": "HumanEval pass@1, retencion = tras_B / tras_A",
+    "penalizacion": "cada 10 pasos, calibrada por ratio del gradiente",
+    "semillas_evaluacion": [
+      42,
+      123,
+      456,
+      789,
+      1011,
+      2022,
+      3033,
+      4044,
+      5055,
+      6066
+    ],
+    "semillas_ajuste": [
+      7077,
+      8088
+    ]
+  },
+  "construccion": {
+    "formula": "A_ij = |cos(w_i,w_j)|, diagonal a cero",
+    "propiedad_1": "invariante al escalado de fila: el grado es independiente de ||w_i|| por construccion",
+    "propiedad_2": "sin mapa acotado, las entradas ocupan todo [0,1]"
+  },
+  "cribado_estatico": {
+    "exceso_C_sobre_D": {
+      "_def": "C/D, vale 1 exacto para A constante",
+      "original_sigmoid": "1.0000 en todos los modulos (canal muerto)",
+      "coseno_mediana_28_modulos": 1.357,
+      "coseno_por_modulo_capa0": {
+        "q_proj": 1.8372,
+        "k_proj": 1.5857,
+        "v_proj": 1.1446,
+        "o_proj": 1.0473
+      }
+    },
+    "C_normalizacion_libreria": {
+      "_def": "Tr(A^3)/||A||_F^3, la que entra en el objetivo",
+      "q_proj": {
+        "sigmoid_rama_cuadrada": 0.999976,
+        "sigmoid_rama_gram": 0.996312,
+        "coseno": 0.802349
+      },
+      "v_proj": {
+        "sigmoid_rama_gram": 0.999986,
+        "coseno": 0.512439
+      }
+    },
+    "elasticidad": {
+      "original_mediana": 0.84,
+      "original_minimo": 0.0,
+      "coseno_mediana": 16.6
+    }
+  },
+  "fase1a_controlabilidad": {
+    "_nota": "contraste entre signos del termino de clustering, en % del valor base, con OMEGA_EVERY_K=1",
+    "separacion_de_signo": "16 de 16 mediciones con el signo correcto",
+    "contraste_por_modulo": {
+      "q_proj": {
+        "t0.01": 0.273,
+        "t0.03": 0.318
+      },
+      "k_proj": {
+        "t0.01": 1.635,
+        "t0.03": 1.502
+      },
+      "v_proj": {
+        "t0.01": 0.297,
+        "t0.03": 3.167
+      },
+      "o_proj": {
+        "t0.01": 0.046,
+        "t0.03": 0.071
+      }
+    }
+  },
+  "fase1b_signo": {
+    "_nota": "que direccion del termino de clustering ayuda a retener. 6 semillas fuera de muestra.",
+    "pares": {
+      "7077": {
+        "baja_C": 0.6744,
+        "sube_C": 0.1489
+      },
+      "8088": {
+        "baja_C": 0.3191,
+        "sube_C": 0.6
+      },
+      "9099": {
+        "baja_C": 0.5789,
+        "sube_C": 0.3103
+      },
+      "1122": {
+        "baja_C": 0.5405,
+        "sube_C": 0.6087
+      },
+      "2233": {
+        "baja_C": 0.5758,
+        "sube_C": 0.5882
+      },
+      "3344": {
+        "baja_C": 0.3158,
+        "sube_C": 0.2143
+      }
+    },
+    "resultado": "3 y 3. Mediana de la diferencia pareada -0.045, Wilcoxon W=8 (n=6). El signo NO manda.",
+    "medias": {
+      "baja_C": 0.5008,
+      "sube_C": 0.4117
+    }
+  },
+  "barrido_de_target": {
+    "_nota": "el optimo NO transfiere porque cambia la direccion del gradiente, no solo su modulo",
+    "semillas": [
+      7077,
+      8088
+    ],
+    "valores": {
+      "0.001": [
+        0.5745,
+        0.4348
+      ],
+      "0.003": [
+        0.8571,
+        0.6
+      ],
+      "0.01": [
+        0.7209,
+        0.5319
+      ],
+      "0.03": [
+        0.6122,
+        0.5
+      ]
+    },
+    "orden_en_las_dos_semillas": "0.003 > 0.01 > 0.03 > 0.001 (identico en ambas)",
+    "elegido": 0.003,
+    "comentario": "optimo INTERIOR y acotado por los dos lados, frente al 0.03 en el borde de la rejilla original"
+  },
+  "fase2_evaluacion": {
+    "cos_composite": {
+      "por_semilla": {
+        "42": 0.3607,
+        "123": 0.561,
+        "456": 0.56,
+        "789": 0.5625,
+        "1011": 0.587,
+        "2022": 0.5714,
+        "3033": 0.5283,
+        "4044": 0.5349,
+        "5055": 0.4565,
+        "6066": 0.6522
+      },
+      "media": 0.5374,
+      "desv": 0.0722
+    },
+    "cos_clustonly": {
+      "_nota": "solo el termino de clustering, mismo punto de operacion",
+      "por_semilla": {
+        "42": 0.3182,
+        "123": 0.3333,
+        "456": 0.3,
+        "789": 0.4364,
+        "1011": 1.3333,
+        "2022": 0.4043,
+        "3033": 0.2075,
+        "4044": 0.6207,
+        "5055": 0.093,
+        "6066": 0.725
+      },
+      "media": 0.4772,
+      "desv": 0.3527
+    },
+    "comparacion_con_omega_lib": {
+      "victorias_cos": "0 de 10",
+      "dif_media": -0.2288,
+      "dif_mediana": -0.2128,
+      "wilcoxon_W": 0,
+      "p_bilateral": 0.002,
+      "nota": "el maximo del compuesto (0.5870) queda por debajo del minimo de omega_lib (0.5950), asi que el veredicto no depende del emparejamiento"
+    },
+    "comparacion_con_baselines": {
+      "vs_wd": {
+        "victorias": "4 de 10",
+        "dif_media": -0.056
+      },
+      "vs_ewc": {
+        "victorias": "4 de 10",
+        "dif_media": -0.0558
+      }
+    },
+    "descomposicion": {
+      "_def": "compuesto menos clustering-only, aporte de M, D y Coex",
+      "mediana": 0.1466,
+      "positivas": "7 de 10",
+      "wilcoxon_W": 15,
+      "referencia_bajo_sigmoid": 0.2273,
+      "fraccion": "64%"
+    }
+  },
+  "conclusion": "Activar el canal de clustering NO mejora la retencion, la empeora, y de forma monotona: clustering-only bajo coseno 0.477, compuesto bajo coseno 0.537, compuesto bajo la construccion original 0.766. La direccion abierta del apendice queda cerrada en negativo.",
+  "referencias": {
+    "omega_lib_10_semillas": 0.7662,
+    "none": 0.6308,
+    "wd": 0.5935,
+    "ewc": 0.5932,
+    "omega_raw": 0.5389,
+    "rownorm_su_optimo_t0.001": 0.661
+  }
+}
