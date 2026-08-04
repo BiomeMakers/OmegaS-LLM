@@ -255,7 +255,13 @@ mean-centring deflates the trivial all-ones eigenvector, so $M$ estimates the
 algebraic connectivity, that is the Fiedler value $\lambda_2(L)$, rather than
 modularity in the community-detection sense; we retain the symbol $M$ for
 continuity with the index it derives from, and note that minimising
-$\lambda_2$ is what pushes the graph towards a more modular structure. The
+$\lambda_2$ is what pushes the graph towards a more modular structure.
+Penalising the Fiedler value of a network's weight graph during training was
+introduced by Tam and Dunson~\cite{tam2020} as Fiedler regularisation, and
+our $M$ factor coincides with theirs in both quantity and direction; what
+differs here is that $\lambda_2$ enters as one factor of a composite
+objective alongside a triadic term, and, as Section~\ref{sec:mechanism}
+reports, it is not the factor that carries the effect we measure. The
 per-layer penalty is
 \begin{equation}
   \Omega^{\text{lib}}_\ell =
@@ -437,7 +443,11 @@ with architecture [784$\to$256$\to$128$\to$10], Adam optimiser
 (lr$=10^{-3}$), batch size 128, 5 epochs, seed 42.
 
 LLM experiments use Llama-3-8B \cite{meta2024} with LoRA adapters
-($r{=}8$, $\alpha{=}16$, target: \texttt{q\_proj}, \texttt{v\_proj}).
+($r{=}8$, $\alpha{=}16$). The adapter is inserted into \texttt{q\_proj} and
+\texttt{v\_proj} of every attention layer, which is the placement the original
+LoRA work selects by ablation~\cite{hu2022} and the one in near-universal use
+since; we use it here so that the comparison against baselines that assume it
+is like for like.
 
 Omega-S hyperparameters differ between the two runs, and we give both because
 the repository quick-start reproduces the first and not the second. The
@@ -944,19 +954,6 @@ There is a reporting template in the repository.
 
 \subsection{Limitations}
 
-\paragraph{The adapter placement used throughout is the conventional one.} Every
-experiment in this paper inserts the adapter into \texttt{q\_proj} and
-\texttt{v\_proj}, which is the field's convention. Separate work of ours
-measures, before training, how much the two tasks' gradient subspaces overlap
-per module, and finds that placing the adapter where they overlap least retains
-substantially more capability than the conventional placement, with the same
-number of adapted modules and no penalty of any kind~\cite{acedo2026placement}.
-The results reported here are therefore obtained on a placement that appears not
-to be the best available. Whether the two interventions compose is measured
-there and is not resolved: the direction is positive on 7 of 10 seeds and the
-magnitude sits below the run-to-run standard deviation of
-Section~\ref{sec:ruido}.
-
 \label{sec:lim}
 \label{sec:limits}
 
@@ -1311,6 +1308,22 @@ pruning.
 \textbf{SAM}~\cite{foret2021} seeks flat minima in the loss landscape and
 is blind to the internal topology of weight matrices. Omega-S and SAM are
 complementary, not competing.
+
+\textbf{Graph-spectral regularisers.} Fiedler
+regularisation~\cite{tam2020} penalises the algebraic connectivity
+$\lambda_2$ of the graph induced by $|W|$ during training, with theoretical
+support from spectral graph theory and an equivalent formulation as a
+structurally weighted $L_1$ penalty. It is the closest antecedent to the
+present work in kind: a functional of a graph built from the weights,
+minimised as part of the training objective rather than computed as a
+diagnostic. Two things separate the two. First, the objective here is
+triadic, built on $\operatorname{Tr}(A^3)$, and $\lambda_2$ appears only as
+one of four factors; a graph-theoretic penalty defined on a bipartite
+construction, as several in this family are, would annihilate the triadic
+term identically. Second, and against our own interest, our measurement
+(Section~\ref{sec:mechanism}) finds the $\lambda_2$ channel numerically
+inert in this construction, so we make no claim to improve on Fiedler
+regularisation on its own ground; the comparison remains to be run.
 
 \textbf{Structured / Group Sparsity}~\cite{yuan2006} explicitly targets
 neuron elimination based on weight magnitude. In our own measurements the
@@ -2165,6 +2178,13 @@ Foret P, Kleiner A, Mobahi H, Neyshabur B.
 Sharpness-Aware Minimization for Efficiently Improving Generalization.
 \textit{ICLR}. 2021.
 
+\bibitem{tam2020}
+Tam E, Dunson D.
+Fiedler Regularization: Learning Neural Networks with Graph Sparsity.
+\textit{ICML}. 2020. arXiv:2003.00992.
+Extended version: Spectral Gap Regularization of Neural Networks.
+arXiv:2304.03096. 2023.
+
 \bibitem{hutchinson1990}
 Hutchinson MF.
 A stochastic estimator of the trace of the influence matrix for Laplacian
@@ -2282,12 +2302,6 @@ Learning.
 Pinto A F, et al.\ (2021).
 On the reproducibility of neural network predictions.
 \emph{arXiv:2105.05482}.
-
-\bibitem{acedo2026placement}
-Acedo A (2026).
-Where to Put the Adapter: Choosing LoRA Modules by Pre-Training Gradient
-Overlap.
-\emph{Preprint}.
 
 \bibitem{steele2026}
 Steele B (2026).
