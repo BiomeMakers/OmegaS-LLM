@@ -19,7 +19,7 @@ omega = StochasticOmegaS(num_samples=16)
 loss = task_loss + lam * sum(omega(m.weight) for m in target_modules)
 ```
 
-Applied every ten steps it adds **under 0.4%** to the cost of a training step.
+Applied every ten steps it adds **under 4%** to the cost of a training step.
 
 Llama-3-8B, LoRA, fine-tuned from code to prose, HumanEval retention, ten
 seeds, every arm tuned:
@@ -113,16 +113,22 @@ included.
 
 ## If you run it, tell us
 
-The placement diagnostic (`experiments/adapter_placement.py`) takes minutes, does
-not train anything, and needs no data beyond a few batches of each of your two
-tasks. It is validated with training on one model and one task pair, and the head
-of its ranking reproduces on three model families, which is not the same as
-knowing that it transfers to yours.
+The mechanism measurement (`experiments/check_M.py`) takes minutes, does not
+train anything, and needs no data at all: it reads the weights of a model you
+already have and reports the elasticity of each of the four factors of the
+objective. It is what establishes that three of them are inert under the
+construction used here, and we have run it on one model.
+
+```bash
+MODEL=your/model python experiments/check_M.py
+```
 
 **[Open a replication report](../../issues/new?template=replication.yml)** with
-what came out. A negative result is as useful to us as a positive one and we
-would rather have it: if the diagnostic does not hold up outside the cases we
-tested, that is the single most valuable thing anyone can tell us right now.
+what came out, attaching the `check_M.json` it writes. A result that goes against
+ours is more useful than one that confirms it: if the factors turn out to be live
+on your model, the reduction to degree variance is specific rather than general,
+and that is the single most valuable thing anyone can tell us right now. See
+[REPLICATION.md](REPLICATION.md).
 
 If you also measured run-to-run variation in your setup, please include it. Ours
 is 0.104 in retention ratio and we have not found the quantity reported for this

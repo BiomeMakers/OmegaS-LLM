@@ -9,7 +9,7 @@ abstract: >
   estimation of Tr(A³) on the weight adjacency matrix A = WW⊤. It needs no
   previous-task data, no Fisher matrix and no stored copy of the old weights.
   On Llama-3-8B with LoRA it retains more of the original capability than no
-  regularisation on 9 of 10 seeds, and adds under 0.4% to the cost of a
+  regularisation on 9 of 10 seeds, and adds under 4% to the cost of a
   training step.
 authors:
   - family-names: Acedo

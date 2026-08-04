@@ -28,7 +28,7 @@ arm tuned and measured in the same session):
   (0.173 -> 0.238 absolute pass@1; sign test p=0.011, Wilcoxon p=0.006)
 - as a retention ratio, 62.9% -> 84.1%
 - beats tuned weight decay 10/10 (p=0.002) and tuned EWC 8/10 (p=0.014)
-- under 0.4% added cost per training step; +13 MB VRAM on Llama-3-8B
+- under 4% added cost per training step; +13 MB VRAM on Llama-3-8B
 
 Mechanism reported as measured, not asserted: three of the four factors are
 numerically inert and the effect is carried by degree variance. The

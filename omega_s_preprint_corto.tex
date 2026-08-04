@@ -48,7 +48,7 @@ learned.
 We present \textbf{Omega-S}, a drop-in penalty computed from the weight matrix
 alone: it needs no previous-task data, no Fisher matrix and no stored copy of
 the old weights, which is what the standard baseline for this problem requires.
-It is three lines in an existing training loop and adds under $0.4\%$ to the
+It is three lines in an existing training loop and adds under $4\%$ to the
 cost of a step.
 
 \textbf{Retention.} On Llama-3-8B with LoRA, fine-tuned from code to prose and
@@ -148,7 +148,7 @@ on the connectivity graph $WW^\top$ of a weight matrix, built from
 $\operatorname{Tr}(A^3)$ and estimated by Hutchinson's method so that its cost
 is $\mathcal{O}(N^2)$ rather than $\mathcal{O}(N^3)$. It needs no previous-task
 data, no Fisher matrix and no stored copy of the old weights, and adds under
-$0.4\%$ to the cost of a training step.
+$4\%$ to the cost of a training step.
 
 \textbf{A design space, mapped rather than assumed.} Three choices are open in
 turning the index into a penalty: the graph construction, the form of the
@@ -1665,7 +1665,7 @@ Weight Decay ($\lambda{=}0.01$) & 0.2464 & 92.56\% & 1.12 & \textbf{69.00} \\
 \end{tabular}
 \end{table}
 
-Omega-S achieves 13$\times$ greater reduction in degree variance compared
+Omega-S achieves 8$\times$ greater reduction in degree variance compared
 to weight decay (0.136 vs.\ 1.12), with only 0.54\,pp accuracy cost
 versus 2.90\,pp for weight decay. Weight decay reduces the maximum hub
 more aggressively (69.00 vs.\ 116.83), consistent with indiscriminate norm

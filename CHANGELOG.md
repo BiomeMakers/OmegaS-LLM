@@ -353,7 +353,7 @@ task pairs; the tail does not.
 - HuggingFace + PEFT integration utilities for LoRA adapter injection.
 
 **Validated results (from preprint)**
-- 13× greater degree variance reduction vs. weight decay (0.136 vs. 1.12)
+- 8× greater degree variance reduction vs. weight decay (0.136 vs. 1.12)
   with only 0.54pp accuracy cost vs. 2.90pp for weight decay.
 - 54.46% real FLOPs reduction via topology-guided structural pruning
   (vs. 25.27% under equivalent weight decay), with zero accuracy degradation.

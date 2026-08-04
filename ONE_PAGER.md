@@ -27,7 +27,7 @@ omega = StochasticOmegaS(num_samples=16)
 loss = task_loss + lam * sum(omega(m.weight) for m in target_modules)
 ```
 
-Applied every ten steps it adds **under 0.4%** to the cost of a training step.
+Applied every ten steps it adds **under 4%** to the cost of a training step.
 
 ## What it does
 

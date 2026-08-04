@@ -1,80 +1,52 @@
 name: Replication report
-description: You ran the placement diagnostic on your own model. Tell us what came out, including if it came out wrong.
+description: You ran check_M.py on your own model. Tell us what came out, including if it came out against us.
 title: "[replication] "
 labels: ["replication"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for running it. **Negative results are as useful to us as positive ones** and
-        we would rather hear about them: our measurement covers three model families and
-        three task pairs, which is not enough to know where it stops holding.
+        Thanks for running it. **A result that goes against ours is more useful to us
+        than one that confirms it**, and we would rather hear about it: we have run
+        this on one model, which is not enough to know whether the reduction to
+        degree variance is general or specific to what we measured.
 
-        Nothing here is required. Fill in what you have.
+        Nothing here is required except the model name. Fill in what you have.
 
   - type: input
     id: model
     attributes:
       label: Model
-      placeholder: e.g. Llama-3-8B, Qwen2.5-7B, your own checkpoint
-    validations:
-      required: true
-
-  - type: input
-    id: tasks
-    attributes:
-      label: The two tasks
-      description: What the model knew, and what you fine-tuned it on.
-      placeholder: e.g. code to prose, general to legal, English to Spanish
+      placeholder: e.g. Qwen2.5-7B, Mistral-7B, your own checkpoint
     validations:
       required: true
 
   - type: dropdown
-    id: what
+    id: verdict
     attributes:
-      label: What did you run?
+      label: What the script printed at the end
       options:
-        - Only the diagnostic (adapter_placement.py), no training
-        - The diagnostic and then trained with the suggested placement
-        - Something else, described below
+        - C and M are inert (reproduces our finding)
+        - The factors respond, but an order of magnitude less than Coex
+        - The factors are live, comparably to Coex (does not reproduce)
+        - It did not run
     validations:
       required: true
 
   - type: textarea
-    id: ranking
+    id: numbers
     attributes:
-      label: The per-type ordering the diagnostic gave
-      description: |
-        The `POR TIPO DE MODULO` block that the script prints at the end. Paste it as is.
-        On Llama-3-8B code→prose we get `o_proj > q_proj > k_proj > v_proj`; the first two
-        positions held across every model we tried and the last two did not.
-      render: text
-
-  - type: textarea
-    id: training
-    attributes:
-      label: If you trained, what happened
-      description: |
-        Retention or whatever capability measure you used, for the suggested placement and
-        for whatever you were doing before. Per seed if you have it.
-
-        **Two things worth checking before reading a difference**: that both arms adapt the
-        same number of modules, or you are comparing capacity and not placement; and that
-        both arms end the first task at a similar capability, or the ratio is inflated by a
-        ceiling effect.
-      render: text
-
-  - type: input
-    id: seeds
-    attributes:
-      label: How many seeds
-      description: |
-        Repeating an identical run in our setting moves retention by 0.104 in standard
-        deviation, so a single seed does not separate much.
-      placeholder: e.g. 3
+      label: The four medians
+      description: >
+        Paste the "median" lines the script prints, or attach the check_M.json
+        file it writes, which is better because it carries the per-module rows.
+      render: shell
 
   - type: textarea
     id: anything
     attributes:
       label: Anything else
-      description: Where it broke, what did not apply, what you would have wanted the script to do.
+      description: >
+        Whether it varied with depth, whether square and non-square modules
+        behaved differently, anything that surprised you, or anything about the
+        checkpoint we would not guess.
