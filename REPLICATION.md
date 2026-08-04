@@ -5,11 +5,14 @@ this is it. It takes minutes, needs no training, no previous-task data and no
 GPU.
 
 ```bash
-MODEL=your/model python experiments/check_M.py
+pip install numpy
+MODEL=your/model python3 experiments/check_M.py
 ```
 
-The model has to be in your local Hugging Face cache already, or given as a
-path. Nothing is downloaded.
+Numpy is the only dependency: this script does not import torch or
+transformers, so you do not need the repository's full `requirements.txt` to
+run it. The model has to be in your local Hugging Face cache already, or given
+as a path. Nothing is downloaded.
 
 ## What it measures
 

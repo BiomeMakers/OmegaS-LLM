@@ -199,6 +199,7 @@ def elasticities(W, branch, h=1e-3, seed=0):
 
 def main():
     model = os.environ.get("MODEL", "NousResearch/Meta-Llama-3-8B")
+    is_reference_model = "llama-3-8b" in model.lower().replace("meta-", "")
     snapshot = resolve_snapshot(model)
     index = read_headers(snapshot)
     projections = find_projections(index)
@@ -216,7 +217,8 @@ def main():
             continue
         branch = "square" if W.shape[0] == W.shape[1] else "gram"
         e = elasticities(W, branch)
-        print(f"L{layer}.{label:18} {branch:>8} {e['C']:10.4f} {e['D']:10.4f} "
+        name = f"L{layer}.{label}"
+        print(f"{name:24} {branch:>8} {e['C']:10.4f} {e['D']:10.4f} "
               f"{e['M_lambda2']:10.4f} {e['Coex']:10.4f}")
         rows.append(dict(layer=layer, module=label, branch=branch, **e))
 
@@ -238,11 +240,15 @@ def main():
         print("  please open an issue with check_M.json attached.")
     elif median["M_lambda2"] < 0.05 and median["C"] < 0.05:
         verdict = "inert"
-        print("  C and M ARE INERT here, as they are on Llama-3-8B. Under this")
-        print("  construction the objective reduces in practice to a penalty on")
-        print("  the variance of node degrees. This REPRODUCES the paper's finding")
-        print("  on a different model, which is a useful result and we would like")
-        print("  to hear about it.")
+        print("  C AND M ARE INERT here. Under this construction the objective")
+        print("  reduces in practice to a penalty on the variance of node degrees.")
+        if is_reference_model:
+            print("  This is the model the paper measures, so it is a check that the")
+            print("  script agrees with Table 3 rather than new evidence.")
+        else:
+            print("  This REPRODUCES the paper's finding on a model we did not")
+            print("  measure, which is a useful result and we would like to hear")
+            print("  about it.")
     elif median["M_lambda2"] < median["Coex"] / 10:
         verdict = "weak"
         print("  The factors respond, but an order of magnitude less than Coex.")
@@ -250,7 +256,7 @@ def main():
         print("  Llama-3-8B. Worth reporting with the numbers above.")
     else:
         verdict = "live"
-        print("  THE FACTORS ARE LIVE on this model, comparably to Coex. This does")
+        print("  THE FACTORS ARE LIVE here, comparably to Coex. This does")
         print("  NOT reproduce our finding, and it is the more interesting outcome:")
         print("  it would mean the reduction to degree variance is specific to the")
         print("  models we measured rather than general. Please report it.")

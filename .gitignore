@@ -51,3 +51,4 @@ log_error*.txt
 
 # Material interno, no se publica
 _material_interno/
+check_M.json

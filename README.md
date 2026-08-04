@@ -55,7 +55,7 @@ one construction on one model's weights. The check runs on base weights, needs
 no training and no GPU:
 
 ```bash
-python experiments/check_M.py
+python3 experiments/check_M.py
 ```
 
 **[Report what you get →](../../issues/new?template=replication.yml)**
@@ -120,7 +120,8 @@ objective. It is what establishes that three of them are inert under the
 construction used here, and we have run it on one model.
 
 ```bash
-MODEL=your/model python experiments/check_M.py
+pip install numpy   # the only dependency of this script
+MODEL=your/model python3 experiments/check_M.py
 ```
 
 **[Open a replication report](../../issues/new?template=replication.yml)** with
