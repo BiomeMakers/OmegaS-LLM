@@ -6,7 +6,7 @@
 **Alberto Acedo** · Biome Makers Inc.
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-green.svg)](LICENSE)
 [![Patent Pending](https://img.shields.io/badge/USPTO-Patent%20Pending%2064%2F121%2C656-blue)](https://www.uspto.gov)
-[![arXiv](https://img.shields.io/badge/arXiv-preprint-red)](https://arxiv.org)
+[![arXiv](https://img.shields.io/badge/arXiv-2608.03887-b31b1b.svg)](https://arxiv.org/abs/2608.03887)
 
 ---
 
@@ -395,7 +395,7 @@ Omega-S was motivated by empirical observations of microbial soil network topolo
 **Alberto Acedo** · Biome Makers Inc.  
 [![Patent Pending](https://img.shields.io/badge/USPTO-Patent%20Pending%2064%2F121%2C656-blue)](https://www.uspto.gov)
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-green.svg)](LICENSE)
-[![arXiv](https://img.shields.io/badge/arXiv-preprint-red)](https://arxiv.org)
+[![arXiv](https://img.shields.io/badge/arXiv-2608.03887-b31b1b.svg)](https://arxiv.org/abs/2608.03887)
 
 ---
 
