@@ -371,7 +371,7 @@ omega-s/
   title   = {Omega-S: A Functional Resilience Index for LLM Fine-Tuning},
   author  = {Acedo, Alberto},
   year    = {2026},
-  note    = {USPTO Patent Pending No. 64/121,656},eprint = {2608.03887}
+  note    = {USPTO Patent Pending No. 64/121,656},
   url     = {https://github.com/BiomeMakers/OmegaS-LLM}
 }
 ```
@@ -580,7 +580,7 @@ If you use Omega-S in your research, please cite:
   title   = {Omega-S: A Functional Resilience Index for LLM Fine-Tuning},
   author  = {Acedo, Alberto},
   year    = {2026},
-  note    = {USPTO Patent Pending No. 64/121,656}, eprint = {2608.03887}
+  note    = {USPTO Patent Pending No. 64/121,656},
   url     = {https://github.com/BiomeMakers/OmegaS-LLM}
 }
 ```
