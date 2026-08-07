@@ -39,6 +39,11 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from peft import get_peft_model, LoraConfig, TaskType
 from datasets import load_dataset, Dataset
 
+# El paquete omega_s vive en la RAIZ del repo, pero al lanzar
+# `python experiments/rerun_retention.py` Python pone experiments/ en sys.path
+# y no la raiz, asi que el brazo omega_lib moria con ModuleNotFoundError. Solo
+# lo sufria omega_lib, porque es el unico que importa el paquete.
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DECISION_RULE = """
 REGLA DE DECISION, PRERREGISTRADA (escrita antes de mirar ningun resultado)
 
