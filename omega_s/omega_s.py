@@ -12,6 +12,7 @@
 #   https://github.com/BiomeMakers/OmegaS-LLM
 # =============================================================================
 
+import os
 import torch
 import torch.nn as nn
 
@@ -61,7 +62,16 @@ class StochasticOmegaS(nn.Module):
             v = ((2 * max_deg) * v - Lv)
             v = (v - torch.mean(v)) / (torch.norm(v) + self.epsilon)
         M_est = torch.abs(torch.matmul(v.t(), (degrees.view(-1, 1) * v) - torch.matmul(A, v)).squeeze()) + self.epsilon
+M_est = torch.abs(torch.matmul(v.t(), (degrees.view(-1, 1) * v) - torch.matmul(A, v)).squeeze()) + self.epsilon
 
+        # M = 1/lambda_2 es la orientacion que define el marco: la iteracion de
+        # potencia estima lambda_2, que es la cantidad INVERSA. Con la variable a
+        # 1 se corre la orientacion de results/minv_10seeds.json (retencion
+        # 0.8408); a 0, la de results/merged_10seeds.json (0.766).
+        if os.environ.get("OMEGA_M_INV", "0") == "1":
+            M_est = 1.0 / (M_est + self.epsilon)
+
+        # Final Omega Penalty
         # Final Omega Penalty
         omega_loss = torch.log((M_est * Coex) / (C * D + self.epsilon))
         return omega_loss.to(original_dtype)
