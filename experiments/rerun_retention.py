@@ -301,7 +301,7 @@ def load_model(seed, smoke):
     m = AutoModelForCausalLM.from_pretrained(
         mid, torch_dtype=torch.bfloat16 if not smoke else torch.float32,
         low_cpu_mem_usage=True).to(DEVICE)
-   if smoke:
+    if smoke:
         tgt = ["c_attn"]
     elif LORA_MODULES:
         tgt = LORA_MODULES
