@@ -288,33 +288,36 @@ pip install -r requirements.txt
 
 ## Reproducing Paper Results
 
+The retention results come from `experiments/rerun_retention.py`, ten seeds.
+The scripts named `fase2_*.py` and `fase3_*.py` are superseded: they predate the
+audit that found the penalty detached from the autograd graph, and are kept only
+for the record.
+
 ```bash
-# Structural control (Table 1)
+# The published configuration. OMEGA_M_INV defaults to 0, which runs the
+# pre-correction orientation and reproduces results/merged_10seeds.json (0.766).
+# The published headline needs it set to 1.
+OMEGA_TARGET=0.03 OMEGA_M_INV=1 python experiments/rerun_retention.py \
+    --cell --seed 42 --arm omega_lib --out cell_42.json
+
+# Equivalently, and without the environment variable: the arm carries the
+# orientation in its name and refuses to run if the package lacks the switch.
+OMEGA_TARGET=0.03 python experiments/rerun_retention.py \
+    --cell --seed 42 --arm omega_minv --out cell_42.json
+
+# Ten seeds: 42 123 456 789 1011 2022 3033 4044 5055 6066
+# Roughly 48 minutes per cell on an A40.
+
+# The controls of 8 August (spectral-norm control, L2-SP, both orientations):
+# results/controls_20260808.json, and NOTA_CONTROLES.md for how to read them.
+
+# Structural control and FLOPs, on MLPs, unaffected by the audit
 python experiments/exp1_structural_control.py
-
-# FLOPs reduction (Tables 2 & 3)
-python experiments/exp4_lambda_sweep.py
-python experiments/exp5_structural_pruning.py
-
-# Catastrophic forgetting : 3 seeds (Table 4)
-# Requires 2x A100 80GB, ~$30 on RunPod
-CUDA_VISIBLE_DEVICES=0 python experiments/fase2_baseline.py > log_baseline.txt &
-CUDA_VISIBLE_DEVICES=1 python experiments/fase2_omega.py > log_omega.txt &
-wait && python experiments/fase2_analisis.py
-
-# Additional seeds
-CUDA_VISIBLE_DEVICES=0 python experiments/fase3_semilla2.py  # SEED=123
-CUDA_VISIBLE_DEVICES=0 python experiments/fase3_semilla3.py  # SEED=456
+python experiments/exp6_wd_vs_omega_pruning.py
 
 # Infrastructure benchmarks
 python benchmarks/benchmark_1gpu_lora.py
 torchrun --nproc_per_node=2 benchmarks/benchmark_2gpu_fsdp.py
-
-# GPT-2 FLOPs in transformer (exploratory)
-CUDA_VISIBLE_DEVICES=0 python experiments/fase3_gpt2_flops.py
-
-# Wanda+Omega-S pruning (exploratory : work in progress)
-CUDA_VISIBLE_DEVICES=0 python experiments/fase5v3_wanda_nonuniform.py
 ```
 
 ## Call for Distributed Validation
@@ -399,207 +402,3 @@ Omega-S was motivated by empirical observations of microbial soil network topolo
 
 ---
 
-## What is Omega-S?
-
-Omega-S is a regularizer for large-scale neural networks whose objective is built on the graph structure of weight matrices. It targets *weight monopolies*: the tendency of a small subset of neurons to concentrate disproportionate connectivity during training. By construction its objective is topological (built on Tr(A^3)); as measured, it operates by controlling the variance of node degrees (see AUDIT.md). Unlike curvature-based regularizers (SAM, weight decay), it acts on the weight graph rather than the loss landscape.
-
-The core insight originates from empirical observations of microbial soil networks: how connectivity is *distributed* over a network, and not only how much of it there is, carries information about robustness that node counts and diversity indices do not. Omega-S imports that intuition into artificial neural networks via a penalty built on Tr(A³) of the weight adjacency matrix A = WW⊤, estimated efficiently with the Hutchinson stochastic trace estimator. A direct measurement (paper §4.6) shows that in this formulation the effect is carried by degree-variance reduction, not by the clustering term.
-
-### Key Results
-
-| Metric | Value | vs. Baseline |
-|--------|-------|-------------|
-| Degree variance reduction | 0.136 (vs. 41.94) | **308× lower** |
-| Code capability kept (Llama-3-8B) | **0.238** absolute HumanEval, 9/10 seeds over no regulariser, p=0.011 | vs. 0.173 none, +37.7% relative |
-| Same, as retention ratio | **84.1%** mean (9/10 over no regulariser, 10/10 over WD, 8/10 over EWC on absolute capability) | vs. 62.9% none, 61.9% WD, 69.1% EWC |
-| Baseline comparisons | secondary: selection was two-seed and both baselines land below no regularisation | see paper §4.5 |
-| Row-norm control (own sweep) | **8/10** for Omega-S, p=0.055; the control does not reliably beat no regularisation (6/10) | `results/rownorm_control_20260726.json` |
-| Row-norm control | omega beats it 10/10 | not equivalent to row-norm balancing |
-| FLOPs in transformer (GPT-2) | superseded: Omega+GL does not beat GL alone (−0.72% vs −0.77%) | connected re-run |
-| Latency overhead (K=10, 1GPU) | **+3.7%** | negligible |
-| Latency overhead (K=10, 2GPU FSDP) | **+1.5%** | zero network cost |
-| VRAM overhead | **+13 MB** | +0.06% |
-
----
-
-## How It Works
-
-```
-A = W · Wᵀ                          # pseudo-topological adjacency matrix
-Tr(A³) ≈ (1/n) Σ zᵢᵀ A³ zᵢ        # Hutchinson stochastic estimator
-A³z = W(Wᵀ(W(Wᵀ(W(Wᵀz)))))        # O(N²) via sequential matrix-vector products
-Ω = λ · Σₗ Tr(Aₗ³) / |numel(Wₗ)|  # per-layer penalty, added to training loss
-```
-
-The method reduces complexity from O(N³) (explicit A³) to **O(N²)** by avoiding materializing A explicitly. When applied to LoRA adapters in FSDP environments, **zero inter-GPU communication** is required.
-
----
-
-## Installation
-
-```bash
-git clone https://github.com/BiomeMakers/OmegaS-LLM.git
-cd omega-s
-pip install -r requirements.txt
-```
-
-Or install as a package:
-
-```bash
-pip install -e .
-```
-
----
-
-## Quick Start
-
-### Single-node (any model with nn.Linear layers)
-
-```python
-from omega_s import StochasticOmegaS
-
-omega = StochasticOmegaS(num_samples=3)
-
-# In your training loop:
-task_loss = model(inputs, labels=inputs).loss
-
-# Apply Omega-S every K steps
-if step % 10 == 0:
-    for name, param in model.named_parameters():
-        if param.requires_grad:
-            omega_loss += omega(param)
-    task_loss = task_loss + 0.05 * omega_loss
-
-task_loss.backward()
-optimizer.step()
-```
-
-### LoRA + HuggingFace (recommended for LLMs)
-
-See [`examples/quickstart_gpt2.py`](examples/quickstart_gpt2.py) for a complete working example with GPT-2 and LoRA adapters.
-
-### Distributed (FSDP, multi-GPU)
-
-```python
-from omega_s import DistributedOmegaS
-omega = DistributedOmegaS(num_samples=3)
-# Usage identical to single-node; synchronization handled internally
-```
-
-See [`benchmarks/benchmark_2gpu_fsdp.py`](benchmarks/benchmark_2gpu_fsdp.py) for the full FSDP profiling setup.
-
----
-
-## Repository Structure
-
-```
-omega-s/
-│
-├── omega_s/                        # Core library
-│   ├── __init__.py
-│   ├── omega_s.py                  # Single-node regularizer (StochasticOmegaS)
-│   ├── omega_s_distributed.py      # Distributed regularizer (DistributedOmegaS, FSDP)
-│   └── integration_huggingface.py  # HuggingFace + PEFT integration utilities
-│
-├── benchmarks/                     # Infrastructure profiling scripts
-│   ├── benchmark_1gpu_lora.py      # Single RTX 4090 : latency & VRAM profiling
-│   └── benchmark_2gpu_fsdp.py      # 2× GPU FSDP : distributed overhead profiling
-│
-├── experiments/                    # Reproducible experiments from the paper
-│   ├── exp1_structural_control.py  # Table 1: Omega-S vs. Baseline vs. Weight Decay
-│   ├── exp2_sparsity_analysis.py   # Sparsity structure analysis (structured vs. dispersed)
-│   ├── exp3_group_sparsity.py      # Omega-S + Group-Lasso combination
-│   ├── exp4_lambda_sweep.py        # Group-lasso λ sweep (Table 2)
-│   ├── exp5_structural_pruning.py  # FLOPs reduction validation (Table 3)
-│   ├── exp6_wd_vs_omega_pruning.py # Weight Decay vs. Omega-S pruning comparison
-│   └── exp7_orchestration_topology.py  # Chatbot orchestration topology test
-│
-├── examples/
-│   └── quickstart_gpt2.py          # End-to-end example with GPT-2 + LoRA
-│
-├── omega_s_preprint.pdf            # Research preprint
-├── requirements.txt
-├── setup.py
-├── LICENSE                         # AGPL-3.0 (research use)
-└── COMMERCIAL-LICENSE.md           # Commercial licensing terms
-```
-
----
-
-## Reproducing Paper Results
-
-All experiments use seed=42. Run from the repo root:
-
-```bash
-# Table 1: Structural control (Omega-S vs. Weight Decay vs. Baseline)
-python experiments/exp1_structural_control.py
-
-# Tables 2 & 3: Group-lasso sweep + structural pruning
-python experiments/exp4_lambda_sweep.py
-python experiments/exp5_structural_pruning.py
-
-# Table 3 comparison: Omega-S+GL vs. Weight Decay (pruning pipeline)
-python experiments/exp6_wd_vs_omega_pruning.py
-
-# Infrastructure benchmarks (requires GPU)
-python benchmarks/benchmark_1gpu_lora.py
-
-# FSDP benchmark (requires 2 GPUs)
-torchrun --nproc_per_node=2 benchmarks/benchmark_2gpu_fsdp.py
-
-# Fase 2: Catastrophic forgetting (requires 2x A100, ~$30 on RunPod)
-# GPU 0: Baseline LoRA
-CUDA_VISIBLE_DEVICES=0 python experiments/exp8_fase2_baseline.py > log_baseline.txt &
-# GPU 1: Omega-S LoRA
-CUDA_VISIBLE_DEVICES=1 python experiments/exp9_fase2_omega_s.py > log_omega.txt &
-# Analysis (after both complete)
-python experiments/exp10_fase2_analisis.py
-```
-
----
-
-## Hyperparameters
-
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `num_samples` | 3 | Hutchinson probe vectors per layer |
-| `λ_omega` | 0.05 | Regularization strength |
-| `K` | 10 | Apply every K training steps |
-| `GL_lambda` | 1e-2 | Group-lasso strength (for pruning) |
-
-**Recommended starting point:** K=10, λ=0.05. Reduce λ if accuracy degrades more than 1pp. Increase K if compute overhead is a concern.
-
----
-
-## Citation
-
-If you use Omega-S in your research, please cite:
-
-```bibtex
-@article{acedo2026omegas,
-  title   = {Omega-S: A Functional Resilience Index for LLM Fine-Tuning},
-  author  = {Acedo, Alberto},
-  year    = {2026},
-  note    = {USPTO Patent Pending No. 64/121,656},
-  url     = {https://github.com/BiomeMakers/OmegaS-LLM}
-}
-```
-
----
-
-## License
-
-**Research use:** AGPL-3.0 : free for academic research, education, and non-profit experimentation. See [`LICENSE`](LICENSE).
-
-**Commercial use:** Requires a separate commercial license covering both software and patent rights. See [`COMMERCIAL-LICENSE.md`](COMMERCIAL-LICENSE.md) for terms and contact information.
-
----
-
-## Conceptual Origin
-
-The Omega-S regularizer was conceptually motivated by empirical observations of microbial soil network topology in vineyard and agricultural ecosystems ([Ortiz-Álvarez et al., 2021](https://doi.org/10.1128/mSystems.00344-21); [Saati-Santamaría et al., 2026](https://doi.org/10.1111/gcb.70984)). Those studies report that agricultural disturbance reorganises soil network structure in directions linked to lower resilience; they do not report degree distributions, and no scale-free claim is made here.
-
----
-
-*USPTO Patent Pending No. 64/121,656*  
-*© 2024-2026 Alberto Acedo. All rights reserved.*
