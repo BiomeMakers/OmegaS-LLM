@@ -52,9 +52,8 @@ without a separate commercial license agreement is not permitted.
         results obtained using the Software, provided that such publications
         cite the original work:
 
-        Acedo, A. (2026). Omega-S: A Functional Resilience Index for Catastrophic Forgetting in LLMs.
-        Language Models via Hutchinson Trace Estimation on Weight Adjacency
-        Matrices. arXiv preprint. Patent pending.
+        Acedo, A. (2026). Omega-S: A Functional Resilience Index for LLM
+        Fine-Tuning. arXiv:2608.03887. Patent pending.
 
   2. COPYLEFT OBLIGATION (AGPL Network Use Provision)
 
@@ -104,4 +103,4 @@ without a separate commercial license agreement is not permitted.
 
 For questions regarding licensing, contact:
 Alberto Acedo — acedo@biomemakers.com
-GitHub: https://github.com/albertoacedo/omega-s
+GitHub: https://github.com/BiomeMakers/OmegaS-LLM
