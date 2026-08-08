@@ -65,6 +65,12 @@ WD_GRID  = [0.0, 0.01, 0.05, 0.1]
 MODEL_ID     = "NousResearch/Meta-Llama-3-8B"
 LORA_R, LORA_ALPHA, LORA_DROPOUT = 8, 16, 0.1
 LORA_TARGETS = ["q_proj", "v_proj"]
+# Colocacion explicita del adaptador: lista de nombres COMPLETOS de modulo
+# separados por coma. Si esta vacia se usa LORA_TARGETS, que es la convencion.
+# Lo usa el experimento de colocacion del repo companero TIM-OmegaS.
+LORA_MODULES = [m.strip() for m in
+                os.environ.get("LORA_MODULES", "").split(",") if m.strip()]
+
 LR, BATCH_SIZE, GRAD_ACCUM = 2e-4, 2, 4
 MAX_SEQ_LEN, MAX_SAMPLES   = 512, 5000
 EPOCHS_A = EPOCHS_B = 1
@@ -295,9 +301,15 @@ def load_model(seed, smoke):
     m = AutoModelForCausalLM.from_pretrained(
         mid, torch_dtype=torch.bfloat16 if not smoke else torch.float32,
         low_cpu_mem_usage=True).to(DEVICE)
+   if smoke:
+        tgt = ["c_attn"]
+    elif LORA_MODULES:
+        tgt = LORA_MODULES
+    else:
+        tgt = LORA_TARGETS
     cfg = LoraConfig(task_type=TaskType.CAUSAL_LM, inference_mode=False,
                      r=LORA_R, lora_alpha=LORA_ALPHA, lora_dropout=LORA_DROPOUT,
-                     target_modules=["c_attn"] if smoke else LORA_TARGETS)
+                     target_modules=tgt)
     return get_peft_model(m, cfg), tok
 
 
