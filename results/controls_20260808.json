@@ -1,0 +1,744 @@
+{
+  "_what": "Four controls on the regulariser of arXiv:2608.03887, run in one session on Llama-3-8B: a spectral-norm control, the L2-SP baseline that the paper lacks, both orientations of the modularity factor, and an unregularised reference measured in the same session.",
+  "_protocol": {
+    "model": "Llama-3-8B",
+    "lora": "r=8, alpha=32, q_proj and v_proj",
+    "tasks": "code_search_net then openwebtext",
+    "metric": "HumanEval pass@1 after each task",
+    "penalty_schedule": "every 10 steps, 8 sampled modules",
+    "strength": "calibrated so the penalty gradient is a fixed fraction of the task gradient",
+    "tuning_seed": 7,
+    "evaluation_seeds": [
+      42,
+      123,
+      456,
+      789,
+      1011,
+      2022,
+      3033,
+      4044,
+      5055,
+      6066
+    ],
+    "note_on_tuning": "The tuning seed is disjoint from the evaluation seeds. The published run tuned on 42 and 123, both inside the evaluation set, which inflates the selected value."
+  },
+  "_primary_metric": "Absolute retained capability (humaneval_after_B), not the retention ratio. The ratio rewards an arm that learns less in task A because it shrinks the denominator.",
+  "_ties": "Ties are discarded from the sign test rather than awarded to the leading arm. One exact tie occurs in omega_minv against none.",
+  "arms": {
+    "none": {
+      "42": {
+        "humaneval_after_A": 0.3293,
+        "humaneval_after_B": 0.1951,
+        "retention_pct": 0.5926,
+        "ppl_after_A": 8.6144,
+        "ppl_after_B": 8.5207
+      },
+      "123": {
+        "humaneval_after_A": 0.3049,
+        "humaneval_after_B": 0.2256,
+        "retention_pct": 0.74,
+        "ppl_after_A": 8.658,
+        "ppl_after_B": 8.5357
+      },
+      "456": {
+        "humaneval_after_A": 0.2927,
+        "humaneval_after_B": 0.1829,
+        "retention_pct": 0.625,
+        "ppl_after_A": 8.6353,
+        "ppl_after_B": 8.5341
+      },
+      "789": {
+        "humaneval_after_A": 0.2683,
+        "humaneval_after_B": 0.1646,
+        "retention_pct": 0.6136,
+        "ppl_after_A": 8.6052,
+        "ppl_after_B": 8.4636
+      },
+      "1011": {
+        "humaneval_after_A": 0.25,
+        "humaneval_after_B": 0.0976,
+        "retention_pct": 0.3902,
+        "ppl_after_A": 8.6271,
+        "ppl_after_B": 8.4537
+      },
+      "2022": {
+        "humaneval_after_A": 0.3049,
+        "humaneval_after_B": 0.2012,
+        "retention_pct": 0.66,
+        "ppl_after_A": 8.6367,
+        "ppl_after_B": 8.4665
+      },
+      "3033": {
+        "humaneval_after_A": 0.2805,
+        "humaneval_after_B": 0.1707,
+        "retention_pct": 0.6087,
+        "ppl_after_A": 8.6629,
+        "ppl_after_B": 8.4956
+      },
+      "4044": {
+        "humaneval_after_A": 0.2683,
+        "humaneval_after_B": 0.1768,
+        "retention_pct": 0.6591,
+        "ppl_after_A": 8.6298,
+        "ppl_after_B": 8.4959
+      },
+      "5055": {
+        "humaneval_after_A": 0.2622,
+        "humaneval_after_B": 0.1585,
+        "retention_pct": 0.6047,
+        "ppl_after_A": 8.636,
+        "ppl_after_B": 8.5697
+      },
+      "6066": {
+        "humaneval_after_A": 0.2866,
+        "humaneval_after_B": 0.1768,
+        "retention_pct": 0.617,
+        "ppl_after_A": 8.7013,
+        "ppl_after_B": 8.4927
+      }
+    },
+    "omega_lib": {
+      "42": {
+        "humaneval_after_A": 0.2744,
+        "humaneval_after_B": 0.1463,
+        "retention_pct": 0.5333,
+        "ppl_after_A": 8.619,
+        "ppl_after_B": 8.4942
+      },
+      "123": {
+        "humaneval_after_A": 0.3232,
+        "humaneval_after_B": 0.1646,
+        "retention_pct": 0.5094,
+        "ppl_after_A": 8.6755,
+        "ppl_after_B": 8.5375
+      },
+      "456": {
+        "humaneval_after_A": 0.2317,
+        "humaneval_after_B": 0.1829,
+        "retention_pct": 0.7895,
+        "ppl_after_A": 8.7756,
+        "ppl_after_B": 8.5271
+      },
+      "789": {
+        "humaneval_after_A": 0.2317,
+        "humaneval_after_B": 0.2073,
+        "retention_pct": 0.8947,
+        "ppl_after_A": 8.6892,
+        "ppl_after_B": 8.5575
+      },
+      "1011": {
+        "humaneval_after_A": 0.311,
+        "humaneval_after_B": 0.1768,
+        "retention_pct": 0.5686,
+        "ppl_after_A": 8.7499,
+        "ppl_after_B": 8.5284
+      },
+      "2022": {
+        "humaneval_after_A": 0.2561,
+        "humaneval_after_B": 0.2134,
+        "retention_pct": 0.8333,
+        "ppl_after_A": 8.6527,
+        "ppl_after_B": 8.5493
+      },
+      "3033": {
+        "humaneval_after_A": 0.3049,
+        "humaneval_after_B": 0.2317,
+        "retention_pct": 0.76,
+        "ppl_after_A": 8.7158,
+        "ppl_after_B": 8.5452
+      },
+      "4044": {
+        "humaneval_after_A": 0.3476,
+        "humaneval_after_B": 0.2378,
+        "retention_pct": 0.6842,
+        "ppl_after_A": 8.6778,
+        "ppl_after_B": 8.5056
+      },
+      "5055": {
+        "humaneval_after_A": 0.2683,
+        "humaneval_after_B": 0.1707,
+        "retention_pct": 0.6364,
+        "ppl_after_A": 8.6354,
+        "ppl_after_B": 8.5488
+      },
+      "6066": {
+        "humaneval_after_A": 0.2622,
+        "humaneval_after_B": 0.1951,
+        "retention_pct": 0.7442,
+        "ppl_after_A": 8.7026,
+        "ppl_after_B": 8.4731
+      }
+    },
+    "omega_raw": {
+      "42": {
+        "humaneval_after_A": 0.3049,
+        "humaneval_after_B": 0.1646,
+        "retention_pct": 0.54,
+        "ppl_after_A": 8.7016,
+        "ppl_after_B": 8.5365
+      },
+      "123": {
+        "humaneval_after_A": 0.2256,
+        "humaneval_after_B": 0.0976,
+        "retention_pct": 0.4324,
+        "ppl_after_A": 9.3745,
+        "ppl_after_B": 8.6665
+      },
+      "456": {
+        "humaneval_after_A": 0.2683,
+        "humaneval_after_B": 0.128,
+        "retention_pct": 0.4773,
+        "ppl_after_A": 9.242,
+        "ppl_after_B": 8.7476
+      },
+      "789": {
+        "humaneval_after_A": 0.2317,
+        "humaneval_after_B": 0.128,
+        "retention_pct": 0.5526,
+        "ppl_after_A": 9.2743,
+        "ppl_after_B": 8.6682
+      },
+      "1011": {
+        "humaneval_after_A": 0.2927,
+        "humaneval_after_B": 0.1768,
+        "retention_pct": 0.6042,
+        "ppl_after_A": 8.7622,
+        "ppl_after_B": 8.5221
+      },
+      "2022": {
+        "humaneval_after_A": 0.25,
+        "humaneval_after_B": 0.1768,
+        "retention_pct": 0.7073,
+        "ppl_after_A": 8.6784,
+        "ppl_after_B": 8.5243
+      },
+      "3033": {
+        "humaneval_after_A": 0.3354,
+        "humaneval_after_B": 0.1402,
+        "retention_pct": 0.4182,
+        "ppl_after_A": 8.6507,
+        "ppl_after_B": 8.4755
+      },
+      "4044": {
+        "humaneval_after_A": 0.1951,
+        "humaneval_after_B": 0.1341,
+        "retention_pct": 0.6875,
+        "ppl_after_A": 9.1158,
+        "ppl_after_B": 8.6486
+      },
+      "5055": {
+        "humaneval_after_A": 0.3049,
+        "humaneval_after_B": 0.1524,
+        "retention_pct": 0.5,
+        "ppl_after_A": 8.6863,
+        "ppl_after_B": 8.5121
+      },
+      "6066": {
+        "humaneval_after_A": 0.2256,
+        "humaneval_after_B": 0.1098,
+        "retention_pct": 0.4865,
+        "ppl_after_A": 9.2077,
+        "ppl_after_B": 8.644
+      }
+    },
+    "omega_spectral": {
+      "42": {
+        "humaneval_after_A": 0.1829,
+        "humaneval_after_B": 0.061,
+        "retention_pct": 0.3333,
+        "ppl_after_A": 10.9267,
+        "ppl_after_B": 8.9051
+      },
+      "123": {
+        "humaneval_after_A": 0.1037,
+        "humaneval_after_B": 0.0732,
+        "retention_pct": 0.7059,
+        "ppl_after_A": 11.6654,
+        "ppl_after_B": 9.0812
+      },
+      "456": {
+        "humaneval_after_A": 0.189,
+        "humaneval_after_B": 0.122,
+        "retention_pct": 0.6452,
+        "ppl_after_A": 9.7652,
+        "ppl_after_B": 8.8076
+      },
+      "789": {
+        "humaneval_after_A": 0.1524,
+        "humaneval_after_B": 0.0915,
+        "retention_pct": 0.6,
+        "ppl_after_A": 10.5469,
+        "ppl_after_B": 8.9929
+      },
+      "1011": {
+        "humaneval_after_A": 0.1098,
+        "humaneval_after_B": 0.0732,
+        "retention_pct": 0.6667,
+        "ppl_after_A": 10.7165,
+        "ppl_after_B": 9.1185
+      },
+      "2022": {
+        "humaneval_after_A": 0.2012,
+        "humaneval_after_B": 0.1037,
+        "retention_pct": 0.5152,
+        "ppl_after_A": 9.532,
+        "ppl_after_B": 8.7733
+      },
+      "3033": {
+        "humaneval_after_A": 0.0793,
+        "humaneval_after_B": 0.1159,
+        "retention_pct": 1.4615,
+        "ppl_after_A": 10.7484,
+        "ppl_after_B": 8.9926
+      },
+      "4044": {
+        "humaneval_after_A": 0.2317,
+        "humaneval_after_B": 0.1159,
+        "retention_pct": 0.5,
+        "ppl_after_A": 9.0074,
+        "ppl_after_B": 8.6505
+      },
+      "5055": {
+        "humaneval_after_A": 0.1585,
+        "humaneval_after_B": 0.0915,
+        "retention_pct": 0.5769,
+        "ppl_after_A": 10.3584,
+        "ppl_after_B": 8.8825
+      },
+      "6066": {
+        "humaneval_after_A": 0.1159,
+        "humaneval_after_B": 0.0976,
+        "retention_pct": 0.8421,
+        "ppl_after_A": 10.5426,
+        "ppl_after_B": 8.8656
+      }
+    },
+    "l2sp": {
+      "42": {
+        "humaneval_after_A": 0.1951,
+        "humaneval_after_B": 0.25,
+        "retention_pct": 1.2812,
+        "ppl_after_A": 8.6123,
+        "ppl_after_B": 8.5962
+      },
+      "123": {
+        "humaneval_after_A": 0.311,
+        "humaneval_after_B": 0.3171,
+        "retention_pct": 1.0196,
+        "ppl_after_A": 8.662,
+        "ppl_after_B": 8.6389
+      },
+      "456": {
+        "humaneval_after_A": 0.311,
+        "humaneval_after_B": 0.2988,
+        "retention_pct": 0.9608,
+        "ppl_after_A": 8.6534,
+        "ppl_after_B": 8.6183
+      },
+      "789": {
+        "humaneval_after_A": 0.2683,
+        "humaneval_after_B": 0.2622,
+        "retention_pct": 0.9773,
+        "ppl_after_A": 8.6025,
+        "ppl_after_B": 8.5816
+      },
+      "1011": {
+        "humaneval_after_A": 0.3049,
+        "humaneval_after_B": 0.3415,
+        "retention_pct": 1.12,
+        "ppl_after_A": 8.6355,
+        "ppl_after_B": 8.6064
+      },
+      "2022": {
+        "humaneval_after_A": 0.2988,
+        "humaneval_after_B": 0.2866,
+        "retention_pct": 0.9592,
+        "ppl_after_A": 8.6402,
+        "ppl_after_B": 8.62
+      },
+      "3033": {
+        "humaneval_after_A": 0.2866,
+        "humaneval_after_B": 0.2866,
+        "retention_pct": 1.0,
+        "ppl_after_A": 8.6696,
+        "ppl_after_B": 8.6418
+      },
+      "4044": {
+        "humaneval_after_A": 0.2378,
+        "humaneval_after_B": 0.2378,
+        "retention_pct": 1.0,
+        "ppl_after_A": 8.6336,
+        "ppl_after_B": 8.6134
+      },
+      "5055": {
+        "humaneval_after_A": 0.2439,
+        "humaneval_after_B": 0.2378,
+        "retention_pct": 0.975,
+        "ppl_after_A": 8.6215,
+        "ppl_after_B": 8.6003
+      },
+      "6066": {
+        "humaneval_after_A": 0.2134,
+        "humaneval_after_B": 0.2683,
+        "retention_pct": 1.2571,
+        "ppl_after_A": 8.6581,
+        "ppl_after_B": 8.6331
+      }
+    },
+    "omega_minv": {
+      "42": {
+        "humaneval_after_A": 0.2805,
+        "humaneval_after_B": 0.1951,
+        "retention_pct": 0.6957,
+        "ppl_after_A": 8.6014,
+        "ppl_after_B": 8.5175
+      },
+      "123": {
+        "humaneval_after_A": 0.2805,
+        "humaneval_after_B": 0.2195,
+        "retention_pct": 0.7826,
+        "ppl_after_A": 8.6297,
+        "ppl_after_B": 8.5018
+      },
+      "456": {
+        "humaneval_after_A": 0.3598,
+        "humaneval_after_B": 0.2378,
+        "retention_pct": 0.661,
+        "ppl_after_A": 8.6561,
+        "ppl_after_B": 8.5554
+      },
+      "789": {
+        "humaneval_after_A": 0.3354,
+        "humaneval_after_B": 0.311,
+        "retention_pct": 0.9273,
+        "ppl_after_A": 8.6023,
+        "ppl_after_B": 8.5027
+      },
+      "1011": {
+        "humaneval_after_A": 0.2744,
+        "humaneval_after_B": 0.1646,
+        "retention_pct": 0.6,
+        "ppl_after_A": 8.6509,
+        "ppl_after_B": 8.5053
+      },
+      "2022": {
+        "humaneval_after_A": 0.2744,
+        "humaneval_after_B": 0.2073,
+        "retention_pct": 0.7556,
+        "ppl_after_A": 8.6268,
+        "ppl_after_B": 8.5569
+      },
+      "3033": {
+        "humaneval_after_A": 0.2988,
+        "humaneval_after_B": 0.25,
+        "retention_pct": 0.8367,
+        "ppl_after_A": 8.6474,
+        "ppl_after_B": 8.5114
+      },
+      "4044": {
+        "humaneval_after_A": 0.3293,
+        "humaneval_after_B": 0.2866,
+        "retention_pct": 0.8704,
+        "ppl_after_A": 8.6444,
+        "ppl_after_B": 8.4959
+      },
+      "5055": {
+        "humaneval_after_A": 0.3049,
+        "humaneval_after_B": 0.2378,
+        "retention_pct": 0.78,
+        "ppl_after_A": 8.6499,
+        "ppl_after_B": 8.5708
+      },
+      "6066": {
+        "humaneval_after_A": 0.311,
+        "humaneval_after_B": 0.2927,
+        "retention_pct": 0.9412,
+        "ppl_after_A": 8.6517,
+        "ppl_after_B": 8.4891
+      }
+    },
+    "omega_minv_tuned": {
+      "42": {
+        "humaneval_after_A": 0.2683,
+        "humaneval_after_B": 0.1646,
+        "retention_pct": 0.6136,
+        "ppl_after_A": 8.5986,
+        "ppl_after_B": 8.5013
+      },
+      "123": {
+        "humaneval_after_A": 0.2744,
+        "humaneval_after_B": 0.2073,
+        "retention_pct": 0.7556,
+        "ppl_after_A": 8.6947,
+        "ppl_after_B": 8.5298
+      },
+      "456": {
+        "humaneval_after_A": 0.2744,
+        "humaneval_after_B": 0.1524,
+        "retention_pct": 0.5556,
+        "ppl_after_A": 8.7293,
+        "ppl_after_B": 8.5326
+      },
+      "789": {
+        "humaneval_after_A": 0.2866,
+        "humaneval_after_B": 0.25,
+        "retention_pct": 0.8723,
+        "ppl_after_A": 8.6805,
+        "ppl_after_B": 8.5234
+      },
+      "1011": {
+        "humaneval_after_A": 0.3171,
+        "humaneval_after_B": 0.189,
+        "retention_pct": 0.5962,
+        "ppl_after_A": 8.6761,
+        "ppl_after_B": 8.519
+      },
+      "2022": {
+        "humaneval_after_A": 0.2744,
+        "humaneval_after_B": 0.2256,
+        "retention_pct": 0.8222,
+        "ppl_after_A": 8.6472,
+        "ppl_after_B": 8.5225
+      },
+      "3033": {
+        "humaneval_after_A": 0.2927,
+        "humaneval_after_B": 0.1768,
+        "retention_pct": 0.6042,
+        "ppl_after_A": 8.6691,
+        "ppl_after_B": 8.5188
+      },
+      "4044": {
+        "humaneval_after_A": 0.3415,
+        "humaneval_after_B": 0.189,
+        "retention_pct": 0.5536,
+        "ppl_after_A": 8.6431,
+        "ppl_after_B": 8.5151
+      },
+      "5055": {
+        "humaneval_after_A": 0.3171,
+        "humaneval_after_B": 0.2195,
+        "retention_pct": 0.6923,
+        "ppl_after_A": 8.6644,
+        "ppl_after_B": 8.527
+      },
+      "6066": {
+        "humaneval_after_A": 0.2927,
+        "humaneval_after_B": 0.2195,
+        "retention_pct": 0.75,
+        "ppl_after_A": 8.6732,
+        "ppl_after_B": 8.4902
+      }
+    }
+  },
+  "means": {
+    "none": {
+      "absolute": 0.175,
+      "ratio": 0.6111,
+      "task_A": 0.2848,
+      "ppl_after_B": 8.5028,
+      "strength": "not applicable"
+    },
+    "omega_lib": {
+      "absolute": 0.1927,
+      "ratio": 0.6954,
+      "task_A": 0.2811,
+      "ppl_after_B": 8.5267,
+      "strength": 0.3
+    },
+    "omega_raw": {
+      "absolute": 0.1409,
+      "ratio": 0.5406,
+      "task_A": 0.2634,
+      "ppl_after_B": 8.5945,
+      "strength": 0.03
+    },
+    "omega_spectral": {
+      "absolute": 0.0945,
+      "ratio": 0.6847,
+      "task_A": 0.1524,
+      "ppl_after_B": 8.907,
+      "strength": 0.03
+    },
+    "l2sp": {
+      "absolute": 0.2787,
+      "ratio": 1.055,
+      "task_A": 0.2671,
+      "ppl_after_B": 8.615,
+      "strength": 1.0
+    },
+    "omega_minv": {
+      "absolute": 0.2402,
+      "ratio": 0.785,
+      "task_A": 0.3049,
+      "ppl_after_B": 8.5207,
+      "strength": 0.03
+    },
+    "omega_minv_tuned": {
+      "absolute": 0.1994,
+      "ratio": 0.6816,
+      "task_A": 0.2939,
+      "ppl_after_B": 8.518,
+      "strength": 0.1
+    }
+  },
+  "paired_tests": {
+    "omega_minv_vs_none": {
+      "wins": 8,
+      "losses": 1,
+      "ties": 1,
+      "sign_test_p": 0.01953,
+      "wilcoxon_W": 43,
+      "wilcoxon_p": 0.00586,
+      "mean_difference": 0.0652
+    },
+    "l2sp_vs_none": {
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "sign_test_p": 0.00098,
+      "wilcoxon_W": 55,
+      "wilcoxon_p": 0.00098,
+      "mean_difference": 0.1037
+    },
+    "omega_lib_vs_none": {
+      "wins": 7,
+      "losses": 2,
+      "ties": 1,
+      "sign_test_p": 0.08984,
+      "wilcoxon_W": 34,
+      "wilcoxon_p": 0.10156,
+      "mean_difference": 0.0177
+    },
+    "none_vs_omega_raw": {
+      "wins": 9,
+      "losses": 1,
+      "ties": 0,
+      "sign_test_p": 0.01074,
+      "wilcoxon_W": 46,
+      "wilcoxon_p": 0.03223,
+      "mean_difference": 0.0341
+    },
+    "none_vs_omega_spectral": {
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "sign_test_p": 0.00098,
+      "wilcoxon_W": 55,
+      "wilcoxon_p": 0.00098,
+      "mean_difference": 0.0805
+    },
+    "omega_minv_vs_omega_lib": {
+      "wins": 8,
+      "losses": 2,
+      "ties": 0,
+      "sign_test_p": 0.05469,
+      "wilcoxon_W": 52,
+      "wilcoxon_p": 0.00488,
+      "mean_difference": 0.0476
+    },
+    "omega_minv_vs_omega_spectral": {
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "sign_test_p": 0.00098,
+      "wilcoxon_W": 55,
+      "wilcoxon_p": 0.00098,
+      "mean_difference": 0.1457
+    },
+    "l2sp_vs_omega_minv": {
+      "wins": 6,
+      "losses": 3,
+      "ties": 1,
+      "sign_test_p": 0.25391,
+      "wilcoxon_W": 37,
+      "wilcoxon_p": 0.04883,
+      "mean_difference": 0.0384
+    },
+    "l2sp_vs_omega_spectral": {
+      "wins": 10,
+      "losses": 0,
+      "ties": 0,
+      "sign_test_p": 0.00098,
+      "wilcoxon_W": 55,
+      "wilcoxon_p": 0.00098,
+      "mean_difference": 0.1841
+    },
+    "omega_minv_vs_omega_minv_tuned": {
+      "wins": 8,
+      "losses": 2,
+      "ties": 0,
+      "sign_test_p": 0.05469,
+      "wilcoxon_W": 48,
+      "wilcoxon_p": 0.01855,
+      "mean_difference": 0.0409
+    }
+  },
+  "plasticity_tests": {
+    "omega_lib_vs_none": {
+      "wins": 5,
+      "losses": 5,
+      "ties": 0,
+      "sign_test_p": 0.62305,
+      "wilcoxon_W": 25,
+      "wilcoxon_p": 0.61523,
+      "mean_difference": -0.0037
+    },
+    "omega_raw_vs_none": {
+      "wins": 3,
+      "losses": 7,
+      "ties": 0,
+      "sign_test_p": 0.94531,
+      "wilcoxon_W": 16,
+      "wilcoxon_p": 0.88379,
+      "mean_difference": -0.0213
+    },
+    "omega_spectral_vs_none": {
+      "wins": 0,
+      "losses": 10,
+      "ties": 0,
+      "sign_test_p": 1.0,
+      "wilcoxon_W": 0,
+      "wilcoxon_p": 1.0,
+      "mean_difference": -0.1323
+    },
+    "l2sp_vs_none": {
+      "wins": 4,
+      "losses": 5,
+      "ties": 1,
+      "sign_test_p": 0.74609,
+      "wilcoxon_W": 14,
+      "wilcoxon_p": 0.84961,
+      "mean_difference": -0.0177
+    },
+    "omega_minv_vs_none": {
+      "wins": 7,
+      "losses": 3,
+      "ties": 0,
+      "sign_test_p": 0.17188,
+      "wilcoxon_W": 41,
+      "wilcoxon_p": 0.09668,
+      "mean_difference": 0.0201
+    },
+    "omega_minv_tuned_vs_none": {
+      "wins": 6,
+      "losses": 4,
+      "ties": 0,
+      "sign_test_p": 0.37695,
+      "wilcoxon_W": 33,
+      "wilcoxon_p": 0.3125,
+      "mean_difference": 0.0091
+    }
+  },
+  "_findings": [
+    "The spectral-norm control loses to every other arm including no regularisation, 10 of 10, and costs 46 per cent of task-A capability. The advantage is not dominant-direction shrinkage.",
+    "The published configuration replicates with a disjoint tuning seed: 0.2402 against 0.1750 for no regularisation, 8 wins to 1 with one tie.",
+    "L2-SP, absent from the published baselines and equally free of previous-task data, is not separated from it: 6 wins to 3 with one tie, sign test p = 0.254, Wilcoxon p = 0.049.",
+    "The two have opposite profiles: the regulariser raises task-A capability while L2-SP is neutral on it, and L2-SP reaches a higher retention ratio.",
+    "The strength sweep on a single seed is unreliable: for the published arm it selected 0.1, which evaluates to 0.1994 against 0.2402 for the inherited 0.03, winning on 2 of 10 seeds. Both are reported."
+  ],
+  "_known_gaps": [
+    "The l2sp cells do not record their multiplier in the per-cell output: the harness writes omega_target for the omega arms but has no equivalent field for L2SP_LAMBDA. The value reported here, 1.0, comes from the launch command and from the sweep file, not from the cells. Fixed for future runs.",
+    "wd and ewc were not re-run in this session. Their figures in the published table come from a different session, without the perplexity and plasticity columns, and with tuning seeds inside the evaluation set.",
+    "Run-to-run standard deviation on the retention ratio was measured at 0.104 in this harness, so mean differences below roughly 0.066 are not distinguishable at ten seeds."
+  ]
+}
