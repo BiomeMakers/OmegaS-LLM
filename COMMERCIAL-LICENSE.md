@@ -1,4 +1,4 @@
-# Omega-S Commercial License
+[# Omega-S Commercial License
 
 **Copyright (C) 2024-2026 Alberto Acedo**  
 **USPTO Patent Pending — No. 64/121,656**
@@ -139,3 +139,4 @@ remain in force regardless of patent status.
 license requires a signed written agreement between the licensee and
 Alberto Acedo (or the designated licensing entity). Jurisdiction: to be
 specified in the license agreement.*
+](https://github.com/BiomeMakers/OmegaS-LLM/edit/main/COMMERCIAL-LICENSE.md)
