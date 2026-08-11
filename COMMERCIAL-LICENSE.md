@@ -1,14 +1,31 @@
-[# Omega-S Commercial License
+# Omega-S Commercial License
 
-**Copyright (C) 2024-2026 Alberto Acedo**  
+**Copyright (C) 2024-2026 Biome Makers Inc.**  
 **USPTO Patent Pending — No. 64/121,656**
+
+---
+
+## Evaluating it does not need a license
+
+**If you want to run Omega-S on your own fine-tuning job to see whether the
+retention gain holds, that is free, it is covered, and you do not need to ask.**
+This applies inside a for-profit organization. It is written into `LICENSE` as
+clause 1(d).
+
+Run it, see what comes out, decide whether it matters to you. We would be glad
+to hear the result either way, and a report that it does not reproduce on your
+setup is as useful to us as one that confirms it.
+
+What evaluation does not cover: deploying, selling or serving a model that was
+trained with Omega-S. That is the line, and it is below.
 
 ---
 
 ## Who Needs a Commercial License
 
 The default license for this repository (AGPL-3.0, see `LICENSE`) permits
-free use for **non-commercial academic research and education only**.
+free use for **non-commercial academic research and education**, plus the
+evaluation exception above.
 
 You require a **separate commercial license** if any of the following apply:
 
@@ -20,11 +37,9 @@ You require a **separate commercial license** if any of the following apply:
   or ML infrastructure service.
 - You incorporate Omega-S into proprietary software and do not wish to
   release the source code of your modifications (as required by AGPL-3.0).
-- You use Omega-S within a corporate R&D environment, even without
-  direct monetization of the specific use.
 
-**In plain terms:** if your organization generates revenue and you are
-using Omega-S, you need a commercial license.
+**In plain terms:** measuring is free, shipping is not. You need a commercial
+license once a model trained with Omega-S leaves your evaluation environment.
 
 ---
 
@@ -105,26 +120,25 @@ Please include in your inquiry:
 
 ## Frequently Asked Questions
 
-**Q: Can I use Omega-S for internal corporate experimentation without a
+**Q: Can I run Omega-S inside my company to see whether it helps, without a
 commercial license?**  
-A: No. Any use within a for-profit organization, including internal R&D
-not directly tied to a product, requires a commercial license. The
-AGPL-3.0 license covers academic institutions, individual researchers,
-and non-profit organizations only.
+A: Yes. That is the evaluation exception in clause 1(d) of `LICENSE`, and it
+is deliberate. You need a commercial license once a model trained with
+Omega-S is deployed, sold or served.
 
 **Q: Can I publish a paper using Omega-S without a commercial license?**  
-A: Yes, provided your use is non-commercial (academic institution or
-independent researcher) and you cite the original work. Commercial
-organizations wishing to publish results from Omega-S experiments should
-inquire about the Research Partnership Program.
+A: Yes, provided you cite the original work. This holds for commercial
+organizations too when the work is an evaluation: we would rather have the
+replication than the fee. Larger joint work may fit the Research Partnership
+Program.
 
 **Q: Does the AGPL-3.0 copyleft obligation apply if I run Omega-S
 internally (not as a service)?**  
 A: AGPL-3.0's network copyleft applies when you provide a service over a
 network. Internal use within a single organization without network exposure
 is governed by standard GPL-3.0 copyleft (source disclosure required only
-if you distribute the binary). Either way, corporate use requires a
-commercial license per the terms above.
+if you distribute the binary). Evaluation runs are covered by clause 1(d)
+either way.
 
 **Q: What happens to my commercial license if the patent is granted or
 rejected?**  
@@ -137,6 +151,5 @@ remain in force regardless of patent status.
 
 *This document does not constitute a license agreement. A valid commercial
 license requires a signed written agreement between the licensee and
-Alberto Acedo (or the designated licensing entity). Jurisdiction: to be
+Biome Makers Inc. (or the designated licensing entity). Jurisdiction: to be
 specified in the license agreement.*
-](https://github.com/BiomeMakers/OmegaS-LLM/edit/main/COMMERCIAL-LICENSE.md)
