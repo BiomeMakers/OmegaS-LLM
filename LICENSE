@@ -55,6 +55,19 @@ without a separate commercial license agreement is not permitted.
         Acedo, A. (2026). Omega-S: A Functional Resilience Index for LLM
         Fine-Tuning. arXiv:2608.03887. Patent pending.
 
+d) EVALUATION EXCEPTION. Run the Software internally to evaluate it,
+        including inside a for-profit organization, with no obligation
+        under this License and with no commercial license required. This
+        covers reproducing the results reported in the accompanying paper
+        and measuring the Software on your own models and data.
+ 
+        The exception ends where deployment begins: a commercial license
+        is required once a model trained, fine-tuned or regularized with
+        the Software is deployed, sold, or offered as part of a service.
+ 
+        Reports of results are welcome either way, including results that
+        do not reproduce.
+
   2. COPYLEFT OBLIGATION (AGPL Network Use Provision)
 
   If you modify the Software and use it to provide a service over a network
